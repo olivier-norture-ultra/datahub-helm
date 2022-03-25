@@ -175,7 +175,7 @@ global:
     uri: "bolt://neo4j"
     username: "neo4j"
     password:
-      secretRef: "neo4j-secrets"
+      secretRef: "datahub-neo4j-secrets"
       secretKey: "neo4j-password"
 
   sql:
@@ -185,7 +185,7 @@ global:
       driver: "com.mysql.cj.jdbc.Driver"
       username: "datahub"
       password:
-        secretRef: "mysql-secrets"
+        secretRef: "datahub-mysql-secrets"
         secretKey: "mysql-password"
 
   datahub:

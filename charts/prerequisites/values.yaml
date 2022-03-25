@@ -2,7 +2,7 @@
 # Copy this file and update to the configuration of choice
 elasticsearch:
   enabled: true   # set this to false, if you want to provide your own ES instance.
-  replicas: 3
+  replicas: 1
   minimumMasterNodes: 1
   # Set replicas to 1 and uncomment this to allow the instance to be scheduled on
   # a master node when deploying on a single node Minikube / Kind / etc cluster.
@@ -45,18 +45,18 @@ neo4j-community:
   acceptLicenseAgreement: "yes"
   defaultDatabase: "graph.db"
   # For better security, add password to neo4j-secrets k8s secret and uncomment below
-  existingPasswordSecret: neo4j-secrets
+  existingPasswordSecret: datahub-neo4j-secrets
 
 mysql:
   enabled: true
   auth:
     # For better security, add mysql-secrets k8s secret with mysql-root-password, mysql-replication-password and mysql-password
-    existingSecret: mysql-secrets
+    existingSecret: datahub-mysql-secrets
 
 cp-helm-charts:
   # Schema registry is under the community license
   cp-schema-registry:
-    enabled: true
+    enabled: false
     kafka:
       bootstrapServers: "prerequisites-kafka:9092"  # <<release-name>>-kafka:9092
   cp-kafka:
@@ -74,4 +74,4 @@ cp-helm-charts:
 
 # Bitnami version of Kafka that deploys open source Kafka https://artifacthub.io/packages/helm/bitnami/kafka
 kafka:
-  enabled: true
+  enabled: false

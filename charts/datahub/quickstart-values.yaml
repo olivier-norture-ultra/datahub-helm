@@ -65,7 +65,7 @@ global:
     uri: "bolt://prerequisites-neo4j-community"
     username: "neo4j"
     password:
-      secretRef: neo4j-secrets
+      secretRef: datahub-neo4j-secrets
       secretKey: neo4j-password
 
   sql:
@@ -77,7 +77,7 @@ global:
       driver: "com.mysql.cj.jdbc.Driver"
       username: "root"
       password:
-        secretRef: mysql-secrets
+        secretRef: datahub-mysql-secrets
         secretKey: mysql-root-password
 
   datahub:

@@ -135,3 +135,8 @@ We welcome contributions from the community. Please refer to our [Contributing G
 ## Community
 
 Join our [slack workspace](https://slack.datahubproject.io) for discussions and important announcements. 
+
+
+## Olivier's notes
+
+Use make to `deploy` or `undeploy` stuff !
