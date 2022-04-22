@@ -81,6 +81,14 @@ spec:
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           env:
+            - name: METADATA_CHANGE_EVENT_NAME
+              value: "io.datahub.metadata.change.event.v1Dev"
+            - name: METADATA_AUDIT_EVENT_NAME
+              value: "io.datahub.metadata.audit.event.v1Dev"
+            - name: FAILED_METADATA_CHANGE_EVENT_NAME
+              value: "io.datahub.failed.metadata.change.event.v1Dev"
+            - name: KAFKA_CONSUMER_GROUP_ID
+              value: "datahub-consumer"
             {{- if .Values.global.datahub.monitoring.enablePrometheus }}
             - name: ENABLE_PROMETHEUS
               value: "true"
@@ -218,6 +226,14 @@ spec:
           {{- with .Values.extraEnvs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+            - name: METADATA_CHANGE_EVENT_NAME
+              value: "io.datahub.metadata.change.event.v1Dev"
+            - name: METADATA_AUDIT_EVENT_NAME
+              value: "io.datahub.metadata.audit.event.v1Dev"
+            - name: FAILED_METADATA_CHANGE_EVENT_NAME
+              value: "io.datahub.failed.metadata.change.event.v1Dev"
+            - name: KAFKA_CONSUMER_GROUP_ID
+              value: "datahub-consumer"
           volumeMounts:
           {{- with .Values.global.credentialsAndCertsSecrets }}
             - name: datahub-certs-dir

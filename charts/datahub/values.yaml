@@ -4,7 +4,16 @@ datahub-gms:
   enabled: true
   image:
     repository: linkedin/datahub-gms
-    tag: "v0.8.33"
+    tag: "v0.8.23"
+  extraEnvs: 
+    - name: METADATA_CHANGE_EVENT_NAME
+      value: io.datahub.metadata.change.event.v1Dev
+    - name: METADATA_AUDIT_EVENT_NAME
+      value: io.datahub.metadata.audit.event.v1Dev
+    - name: FAILED_METADATA_CHANGE_EVENT_NAME
+      value: io.datahub.failed.metadata.change.event.v1Dev
+    # - name: KAFKA_CONSUMER_GROUP_ID
+    #   value: datahub-consumer
 
 datahub-frontend:
   enabled: true
@@ -29,14 +38,24 @@ acryl-datahub-actions:
       memory: 256Mi
 
 datahub-mae-consumer:
+  enabled: true
   image:
     repository: linkedin/datahub-mae-consumer
-    tag: "v0.8.33"
+    tag: "v0.8.23"
+  extraEnvs:
+    - name: KAFKA_TOPIC_NAME
+      value: io.datahub.metadata.change.event.v1Dev
 
 datahub-mce-consumer:
+  enabled: true
   image:
     repository: linkedin/datahub-mce-consumer
-    tag: "v0.8.33"
+    tag: "v0.8.23"
+  extraEnvs:
+    - name: KAFKA_MCE_TOPIC_NAME
+      value: io.datahub.metadata.change.event.v1Dev
+    - name: KAFKA_FMCE_TOPIC_NAME
+      value: io.datahub.failed.metadata.change.event.v1Dev
 
 datahub-ingestion-cron:
   enabled: false
@@ -55,7 +74,7 @@ elasticsearchSetupJob:
     runAsUser: 1000
 
 kafkaSetupJob:
-  enabled: true
+  enabled: false
   image:
     repository: linkedin/datahub-kafka-setup
     tag: "v0.8.33"
@@ -107,14 +126,14 @@ global:
 
   kafka:
     bootstrap:
-      server: "prerequisites-kafka:9092"
-    zookeeper:
-      server: "prerequisites-zookeeper:2181"
+      server: "dev-ultraio-kafka-dev.aivencloud.com:21811"
+    # zookeeper:
+    #   server: "prerequisites-zookeeper:2181"
     ## For AWS MSK set this to a number larger than 1
     # partitions: 3
     # replicationFactor: 3
     schemaregistry:
-      url: "http://prerequisites-cp-schema-registry:8081"
+      url: "http://kafka-schema-registry-svc:8081"
       # type: AWS_GLUE
       # glue:
       #   region: us-east-1
@@ -125,7 +144,7 @@ global:
     uri: "bolt://prerequisites-neo4j-community"
     username: "neo4j"
     password:
-      secretRef: neo4j-secrets
+      secretRef: datahub-neo4j-secrets
       secretKey: neo4j-password
 
   sql:
@@ -137,7 +156,7 @@ global:
       driver: "com.mysql.cj.jdbc.Driver"
       username: "root"
       password:
-        secretRef: mysql-secrets
+        secretRef: datahub-mysql-secrets
         secretKey: mysql-root-password
 
   datahub:
@@ -180,23 +199,22 @@ global:
 #        - "elasticsearch"
 #        - "neo4j"
 
-##  Add below to enable SSL for kafka
-#  credentialsAndCertsSecrets:
-#    name: datahub-certs
-#    path: /mnt/datahub/certs
-#    secureEnv:
-#      ssl.key.password: datahub.linkedin.com.KeyPass
-#      ssl.keystore.password: datahub.linkedin.com.KeyStorePass
-#      ssl.truststore.password: datahub.linkedin.com.TrustStorePass
-#      kafkastore.ssl.truststore.password: datahub.linkedin.com.TrustStorePass
-#
-#  springKafkaConfigurationOverrides:
-#    ssl.keystore.location: /mnt/datahub/certs/datahub.linkedin.com.keystore.jks
-#    ssl.truststore.location: /mnt/datahub/certs/datahub.linkedin.com.truststore.jks
-#    kafkastore.ssl.truststore.location: /mnt/datahub/certs/datahub.linkedin.com.truststore.jks
-#    security.protocol: SSL
-#    kafkastore.security.protocol: SSL
-#    ssl.keystore.type: JKS
-#    ssl.truststore.type: JKS
-#    ssl.protocol: TLS
-#    ssl.endpoint.identification.algorithm:
+  credentialsAndCertsSecrets:
+    name: datahub-kafka-secrets #secret name
+    path: /mnt/certs/
+    secureEnv:
+      # ssl.key.password: KAFKA_SSL_KEYSTORE_PASSWORD
+      ssl.keystore.password: KAFKA_SSL_KEYSTORE_PASSWORD
+      ssl.truststore.password: KAFKA_SSL_TRUSTSTORE_PASSWORD
+      kafkastore.ssl.truststore.password: KAFKA_SSL_TRUSTSTORE_PASSWORD
+
+  springKafkaConfigurationOverrides:
+    ssl.keystore.location: /mnt/certs/keystore.p12
+    ssl.truststore.location: /mnt/certs/truststore.jks
+    kafkastore.ssl.truststore.location: /mnt/certs/truststore.jks
+    security.protocol: SSL
+    kafkastore.security.protocol: SSL
+    ssl.keystore.type: PKCS12
+    ssl.truststore.type: JKS
+    ssl.protocol: TLS
+   #  ssl.endpoint.identification.algorithm:
