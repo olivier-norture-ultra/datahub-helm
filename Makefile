@@ -17,11 +17,17 @@ deploy:
 	kubectl apply -f /home/olivier/data-catalog/datahub-helm/charts/prerequisites/templates/datahub-neo4j-secrets.yaml
 	kubectl apply -f /home/olivier/data-catalog/datahub-helm/charts/prerequisites/templates/datahub-kafka-secrets.yaml
 
-	helm install prerequisites datahub/datahub-prerequisites --values /home/olivier/data-catalog/datahub-helm/charts/prerequisites/values.yaml
-	helm install datahub datahub/datahub --values /home/olivier/data-catalog/datahub-helm/charts/datahub/values.yaml
+	helm install prerequisites datahub/datahub-prerequisites --version=0.0.6 --values /home/olivier/data-catalog/datahub-helm/charts/prerequisites/values.yaml
+	helm install datahub datahub/datahub --version=0.2.69 --values /home/olivier/data-catalog/datahub-helm/charts/datahub/values.yaml
 
 .PHONY: undeploy
 undeploy:
 	helm uninstall prerequisites
 	helm uninstall datahub
 	kubectl delete secrets datahub-mysql-secrets datahub-neo4j-secrets
+
+
+.PHONY: update
+update:
+	helm uninstall datahub
+	helm install datahub datahub/datahub --values /home/olivier/data-catalog/datahub-helm/charts/datahub/values.yaml

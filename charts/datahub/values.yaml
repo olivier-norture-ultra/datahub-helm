@@ -4,7 +4,7 @@ datahub-gms:
   enabled: true
   image:
     repository: linkedin/datahub-gms
-    tag: "v0.8.23"
+    tag: "v0.8.33"
   extraEnvs: 
     - name: METADATA_CHANGE_EVENT_NAME
       value: io.datahub.metadata.change.event.v1Dev
@@ -41,7 +41,7 @@ datahub-mae-consumer:
   enabled: true
   image:
     repository: linkedin/datahub-mae-consumer
-    tag: "v0.8.23"
+    tag: "v0.8.33"
   extraEnvs:
     - name: KAFKA_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
@@ -50,7 +50,7 @@ datahub-mce-consumer:
   enabled: true
   image:
     repository: linkedin/datahub-mce-consumer
-    tag: "v0.8.23"
+    tag: "v0.8.33"
   extraEnvs:
     - name: KAFKA_MCE_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
