@@ -51,19 +51,15 @@ neo4j-community:
   acceptLicenseAgreement: "yes"
   defaultDatabase: "graph.db"
   # For better security, add neo4j-secrets k8s secret with neo4j-password and uncomment below
-  existingPasswordSecret: neo4j-secrets
+  existingPasswordSecret: datahub-neo4j-secrets
 
-mysql:
-  enabled: true
-  auth:
-    # For better security, add mysql-secrets k8s secret with mysql-root-password, mysql-replication-password and mysql-password
-    existingSecret: mysql-secrets
+
 
 postgresql:
   enabled: false
   auth:
     # For better security, add postgresql-secrets k8s secret with postgres-password, replication-password and password
-    existingSecret: postgresql-secrets
+    existingSecret: datahub-postgresql-secrets
 
 cp-helm-charts:
   enabled: false
@@ -87,8 +83,8 @@ cp-helm-charts:
 
 # Bitnami version of Kafka that deploys open source Kafka https://artifacthub.io/packages/helm/bitnami/kafka
 kafka:
-  enabled: true
+  enabled: false
   kraft:
     enabled: false
   zookeeper:
-    enabled: true
+    enabled: false

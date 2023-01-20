@@ -18,6 +18,15 @@ datahub-gms:
   #     password:
   #       secretRef: gms-secret
   #       secretKey: gms-password
+  extraEnvs: 
+    - name: METADATA_CHANGE_EVENT_NAME
+      value: io.datahub.metadata.change.event.v1Dev
+    - name: METADATA_AUDIT_EVENT_NAME
+      value: io.datahub.metadata.audit.event.v1Dev
+    - name: FAILED_METADATA_CHANGE_EVENT_NAME
+      value: io.datahub.failed.metadata.change.event.v1Dev
+    # - name: KAFKA_CONSUMER_GROUP_ID
+    #   value: datahub-consumer
 
 datahub-frontend:
   enabled: true
@@ -51,6 +60,7 @@ acryl-datahub-actions:
       memory: 256Mi
 
 datahub-mae-consumer:
+  enabled: true
   image:
     repository: linkedin/datahub-mae-consumer
     # tag: "v0.10.0" # defaults to .global.datahub.version
@@ -60,8 +70,12 @@ datahub-mae-consumer:
     requests:
       cpu: 100m
       memory: 256Mi
+  extraEnvs:
+    - name: KAFKA_TOPIC_NAME
+      value: io.datahub.metadata.change.event.v1Dev
 
 datahub-mce-consumer:
+  enabled: true
   image:
     repository: linkedin/datahub-mce-consumer
     # tag: "v0.10.0" # defaults to .global.datahub.version
@@ -71,6 +85,11 @@ datahub-mce-consumer:
     requests:
       cpu: 100m
       memory: 256Mi
+  extraEnvs:
+    - name: KAFKA_MCE_TOPIC_NAME
+      value: io.datahub.metadata.change.event.v1Dev
+    - name: KAFKA_FMCE_TOPIC_NAME
+      value: io.datahub.failed.metadata.change.event.v1Dev
 
 datahub-ingestion-cron:
   enabled: false
@@ -102,7 +121,7 @@ elasticsearchSetupJob:
     #   imagePullPolicy: Always
 
 kafkaSetupJob:
-  enabled: true
+  enabled: false
   image:
     repository: linkedin/datahub-kafka-setup
     # tag: "v0.10.0" # defaults to .global.datahub.version
@@ -410,31 +429,31 @@ global:
 
   kafka:
     bootstrap:
-      server: "prerequisites-kafka:9092"
-    zookeeper:
-      server: "prerequisites-zookeeper:2181"
+      server: "dev-ultraio-kafka-dev.aivencloud.com:21811"
+    # zookeeper:
+    #   server: "prerequisites-zookeeper:2181"
     # This section defines the names for the kafka topics that DataHub depends on, at a global level. Do not override this config
     # at a sub-chart level.
     topics:
-      metadata_change_event_name: "MetadataChangeEvent_v4"
-      failed_metadata_change_event_name: "FailedMetadataChangeEvent_v4"
-      metadata_audit_event_name: "MetadataAuditEvent_v4"
-      datahub_usage_event_name: "DataHubUsageEvent_v1"
-      metadata_change_proposal_topic_name: "MetadataChangeProposal_v1"
-      failed_metadata_change_proposal_topic_name: "FailedMetadataChangeProposal_v1"
-      metadata_change_log_versioned_topic_name: "MetadataChangeLog_Versioned_v1"
-      metadata_change_log_timeseries_topic_name: "MetadataChangeLog_Timeseries_v1"
-      platform_event_topic_name: "PlatformEvent_v1"
-      datahub_upgrade_history_topic_name: "DataHubUpgradeHistory_v1"
+      metadata_change_event_name: "io.datahub.metadata.change.event.v4Dev"
+      failed_metadata_change_event_name: "io.datahub.metadata.change.event.v4Dev"
+      metadata_audit_event_name: "io.datahub.metadata.audit.event.v4Dev"
+      datahub_usage_event_name: "io.datahub.usage.event.v1Dev"
+      metadata_change_proposal_topic_name: "io.datahub.metadata.change.proposal.v1Dev"
+      failed_metadata_change_proposal_topic_name: "io.datahub.metadata.change.proposal.failed.v1Dev"
+      metadata_change_log_versioned_topic_name: "io.datahub.metadata.changelog.versioned.v1Dev"
+      metadata_change_log_timeseries_topic_name: "io.datahub.metadata.changelog.timeseries.v1Dev"
+      platform_event_topic_name: "io.datahub.platform.event.v1Dev"
+      datahub_upgrade_history_topic_name: "io.datahub.upgrade.history.v1Dev"
     ## For AWS MSK set this to a number larger than 1
     # partitions: 3
     # replicationFactor: 3
     schemaregistry:
       # GMS Implementation - `url` configured based on component context
-      type: INTERNAL
+      #type: INTERNAL
       # Confluent Kafka Implementation
-      # type: KAFKA
-      # url: "http://prerequisites-cp-schema-registry:8081"
+      type: KAFKA
+      url: "http://kafka-schema-registry-svc:8081"
 
       # Glue Implementation - `url` not applicable
       # type: AWS_GLUE
@@ -447,7 +466,7 @@ global:
     uri: "bolt://prerequisites-neo4j-community"
     username: "neo4j"
     password:
-      secretRef: neo4j-secrets
+      secretRef: datahub-neo4j-secrets
       secretKey: neo4j-password
     # --------------OR----------------
     # value: password
@@ -461,7 +480,7 @@ global:
       driver: "com.mysql.cj.jdbc.Driver"
       username: "root"
       password:
-        secretRef: mysql-secrets
+        secretRef: datahub-mysql-secrets
         secretKey: mysql-root-password
       # --------------OR----------------
       # value: password
@@ -557,23 +576,22 @@ global:
 #        - "elasticsearch"
 #        - "neo4j"
 
-## Add below to enable SSL for kafka
-#  credentialsAndCertsSecrets:
-#    name: datahub-certs
-#    path: /mnt/datahub/certs
-#    secureEnv:
-#      ssl.key.password: datahub.linkedin.com.KeyPass
-#      ssl.keystore.password: datahub.linkedin.com.KeyStorePass
-#      ssl.truststore.password: datahub.linkedin.com.TrustStorePass
-#      kafkastore.ssl.truststore.password: datahub.linkedin.com.TrustStorePass
-#
-#  springKafkaConfigurationOverrides:
-#    ssl.keystore.location: /mnt/datahub/certs/datahub.linkedin.com.keystore.jks
-#    ssl.truststore.location: /mnt/datahub/certs/datahub.linkedin.com.truststore.jks
-#    kafkastore.ssl.truststore.location: /mnt/datahub/certs/datahub.linkedin.com.truststore.jks
-#    security.protocol: SSL
-#    kafkastore.security.protocol: SSL
-#    ssl.keystore.type: JKS
-#    ssl.truststore.type: JKS
-#    ssl.protocol: TLS
-#    ssl.endpoint.identification.algorithm:
+  credentialsAndCertsSecrets:
+    name: datahub-kafka-secrets #secret name
+    path: /mnt/certs/
+    secureEnv:
+      # ssl.key.password: KAFKA_SSL_KEYSTORE_PASSWORD
+      ssl.keystore.password: KAFKA_SSL_KEYSTORE_PASSWORD
+      ssl.truststore.password: KAFKA_SSL_TRUSTSTORE_PASSWORD
+      kafkastore.ssl.truststore.password: KAFKA_SSL_TRUSTSTORE_PASSWORD
+
+  springKafkaConfigurationOverrides:
+    ssl.keystore.location: /mnt/certs/keystore.p12
+    ssl.truststore.location: /mnt/certs/truststore.jks
+    kafkastore.ssl.truststore.location: /mnt/certs/truststore.jks
+    security.protocol: SSL
+    kafkastore.security.protocol: SSL
+    ssl.keystore.type: PKCS12
+    ssl.truststore.type: JKS
+    ssl.protocol: TLS
+   #  ssl.endpoint.identification.algorithm:

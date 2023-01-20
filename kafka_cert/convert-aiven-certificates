@@ -1,0 +1,171 @@
+#!/bin/bash
+
+set -euo pipefail
+
+export TRUSTSTORE_ALIAS="KafkaCA"
+
+generate_keystore()
+{
+    declare service_user="${1}"
+    declare access_cert_file_path="${2}"
+    declare access_key_file_path="${3}"
+
+    declare keystore_file_path="${4}"
+    declare keystore_password="${5}"
+
+    rm -f "${keystore_file_path}"
+    openssl \
+      "pkcs12" \
+      -export \
+      -inkey "${access_key_file_path}" \
+      -in "${access_cert_file_path}" \
+      -out "${keystore_file_path}" \
+      -name "${service_user}" \
+      -password "pass:${keystore_password}"
+}
+
+generate_truststore()
+{
+    declare alias="${1}"
+    declare ca_cert_file_path="${2}"
+
+    declare truststore_file_path="${3}"
+    declare truststore_password="${4}"
+
+    rm -f "${truststore_file_path}"
+    keytool8 \
+      -import \
+      -file "${ca_cert_file_path}" \
+      -alias "${alias}" \
+      -keystore "${truststore_file_path}" \
+      -noprompt \
+      -storepass "${truststore_password}"
+}
+
+main()
+{
+    declare args="$(
+        getopt \
+            -o "" \
+            --long "access-key:,access-cert:,ca-cert:,truststore:,truststore-password:,keystore:,keystore-password:" \
+            --name "convert-aiven-certificates" -- "${@}"
+    )"
+
+    eval set -- "${args}"
+
+    declare ca_cert_file_path=
+    declare access_key_file_path=
+    declare access_cert_file_path=
+
+    declare truststore_file_path=
+    declare truststore_password=
+
+    declare keystore_file_path=
+    declare keystore_password=
+
+    while true; do
+        case "${1}" in
+            "--access-key") 
+                access_key_file_path="${2}"
+                shift 2
+                ;;
+            
+            "--access-cert")
+                access_cert_file_path="${2}"
+                shift 2
+                ;;
+
+            "--ca-cert")
+                ca_cert_file_path="${2}"
+                shift 2
+                ;;
+
+            "--truststore")
+                truststore_file_path="${2}"
+                shift 2
+                ;;
+
+            "--truststore-password")
+                truststore_password="${2}"
+                shift 2
+                ;;
+
+            "--keystore")
+                keystore_file_path="${2}"
+                shift 2
+                ;;
+
+            "--keystore-password")
+                keystore_password="${2}"
+                shift 2
+                ;;
+            
+            "--")
+                shift
+                break
+                ;;
+            
+            *) 
+                break
+                ;;
+        esac
+    done
+
+    declare service_user="${1:-"KafkaUser"}"
+
+    if [[ -z "${ca_cert_file_path}" ]]; then
+        echo "The --ca-cert option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${access_key_file_path}" ]]; then
+        echo "The --access-key option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${access_cert_file_path}" ]]; then
+        echo "The --access-cert option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${truststore_file_path}" ]]; then
+        echo "The --truststore option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${truststore_password}" ]]; then
+        echo "The --truststore-password option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${keystore_file_path}" ]]; then
+        echo "The --keystore option is mandatory! " >&2
+        exit 1
+    fi
+
+    if [[ -z "${keystore_password}" ]]; then
+        echo "The --keystore-password option is mandatory! " >&2
+        exit 1
+    fi
+
+    echo -en "Generating Truststore... " >&2
+    generate_truststore \
+        "${TRUSTSTORE_ALIAS}" \
+        "${ca_cert_file_path}" \
+        "${truststore_file_path}" \
+        "${truststore_password}"
+    echo "OK" >&2
+
+    echo -en "Generating Keystore... " >&2
+    generate_keystore \
+        "${service_user}" \
+        "${access_cert_file_path}" \
+        "${access_key_file_path}" \
+        "${keystore_file_path}" \
+        "${keystore_password}"
+    echo "OK" >&2
+
+    exit 0
+}
+
+main "${@}"
