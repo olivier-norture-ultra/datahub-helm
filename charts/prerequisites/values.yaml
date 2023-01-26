@@ -53,10 +53,14 @@ neo4j-community:
   # For better security, add neo4j-secrets k8s secret with neo4j-password and uncomment below
   existingPasswordSecret: datahub-neo4j-secrets
 
-
+mysql:
+  enabled: false
+  auth:
+    # For better security, add mysql-secrets k8s secret with mysql-root-password, mysql-replication-password and mysql-password
+    existingSecret: datahub-mysql-secrets
 
 postgresql:
-  enabled: false
+  enabled: true
   auth:
     # For better security, add postgresql-secrets k8s secret with postgres-password, replication-password and password
     existingSecret: datahub-postgresql-secrets
