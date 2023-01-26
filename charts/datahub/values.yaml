@@ -19,11 +19,11 @@ datahub-gms:
   #       secretRef: gms-secret
   #       secretKey: gms-password
   extraEnvs: 
-    - name: METADATA_CHANGE_EVENT_NAME
+    - name: METADATA_CHANGE_PROPOSAL_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
-    - name: METADATA_AUDIT_EVENT_NAME
+    - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
       value: io.datahub.metadata.audit.event.v1Dev
-    - name: FAILED_METADATA_CHANGE_EVENT_NAME
+    - name: FAILED_METADATA_CHANGE_PROPOSAL_TOPIC_NAME
       value: io.datahub.failed.metadata.change.event.v1Dev
     # - name: KAFKA_CONSUMER_GROUP_ID
     #   value: datahub-consumer
@@ -42,6 +42,9 @@ datahub-frontend:
   # Set up ingress to expose react front-end
   ingress:
     enabled: false
+  extraEnvs:
+    - name: DATAHUB_TRACKING_TOPIC
+      value: "MyCustomTrackingEvent"
 
 acryl-datahub-actions:
   enabled: true
@@ -71,8 +74,10 @@ datahub-mae-consumer:
       cpu: 100m
       memory: 256Mi
   extraEnvs:
-    - name: KAFKA_TOPIC_NAME
+    - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
+    - name: METADATA_AUDIT_EVENT_NAME
+      value: "MetadataAuditEvent"
 
 datahub-mce-consumer:
   enabled: true
@@ -86,10 +91,10 @@ datahub-mce-consumer:
       cpu: 100m
       memory: 256Mi
   extraEnvs:
-    - name: KAFKA_MCE_TOPIC_NAME
+    - name: METADATA_CHANGE_PROPOSAL_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
-    - name: KAFKA_FMCE_TOPIC_NAME
-      value: io.datahub.failed.metadata.change.event.v1Dev
+    - name: METADATA_CHANGE_EVENT_NAME
+      value: "MetadataChangeEvent"
 
 datahub-ingestion-cron:
   enabled: false

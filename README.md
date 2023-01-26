@@ -138,10 +138,6 @@ Join our [slack workspace](https://slack.datahubproject.io) for discussions and 
 
 Use make to `deploy` or `undeploy` stuff !
 
-```
-org.apache.kafka.common.errors.TopicAuthorizationException: Not authorized to access topics: [MetadataChangeLog_Versioned_v1]
-```
 
-```
-17:26:28.185 [kafka-producer-network-thread | producer-1] ERROR org.apache.kafka.clients.Metadata:299 - [Producer clientId=producer-1] Topic authorization failed for topics [io.datahub.metadata.audit.event.v1Dev, MetadataChangeLog_Versioned_v1]
-```
+### TODO
+- [] Update Kafka configuration https://datahubproject.io/docs/how/kafka-config/
