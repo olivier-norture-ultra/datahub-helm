@@ -141,3 +141,13 @@ Use make to `deploy` or `undeploy` stuff !
 
 ### TODO
 - [] Update Kafka configuration https://datahubproject.io/docs/how/kafka-config/
+
+io.datahub.metadata.change.proposal.v1
+io.datahub.metadata.change.proposal.failed.v1
+io.datahub.metadata.changelog.versioned.v1
+io.datahub.metadata.changelog.timeseries.v1
+io.datahub.metadata.change.event.v4
+io.datahub.metadata.change.event.failed.v4
+io.datahub.metadata.audit.event.v4
+io.datahub.usage.event.v1
+io.datahub.platform.event.v1

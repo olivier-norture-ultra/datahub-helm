@@ -20,13 +20,17 @@ datahub-gms:
   #       secretKey: gms-password
   extraEnvs: 
     - name: METADATA_CHANGE_PROPOSAL_TOPIC_NAME
-      value: io.datahub.metadata.change.event.v1Dev
-    - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
-      value: io.datahub.metadata.audit.event.v1Dev
+      value: io.datahub.metadata.change.proposal.v1Dev
     - name: FAILED_METADATA_CHANGE_PROPOSAL_TOPIC_NAME
-      value: io.datahub.failed.metadata.change.event.v1Dev
-    # - name: KAFKA_CONSUMER_GROUP_ID
-    #   value: datahub-consumer
+      value: io.datahub.metadata.change.proposal.failed.v1Dev
+    - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
+      value: io.datahub.metadata.changelog.versioned.v1Dev
+    - name: METADATA_CHANGE_LOG_TIMESERIES_TOPIC_NAME
+      value: io.datahub.metadata.changelog.timeseries.v1Dev
+    - name: PLATFORM_EVENT_TOPIC_NAME
+      value: io.datahub.platform.event.v1
+    - name: DATAHUB_USAGE_EVENT_NAME
+      value: io.datahub.usage.event.v1
 
 datahub-frontend:
   enabled: true
@@ -44,7 +48,7 @@ datahub-frontend:
     enabled: false
   extraEnvs:
     - name: DATAHUB_TRACKING_TOPIC
-      value: "MyCustomTrackingEvent"
+      value: io.datahub.usage.event.v1
 
 acryl-datahub-actions:
   enabled: true
@@ -76,8 +80,12 @@ datahub-mae-consumer:
   extraEnvs:
     - name: METADATA_CHANGE_LOG_VERSIONED_TOPIC_NAME
       value: io.datahub.metadata.change.event.v1Dev
-    - name: METADATA_AUDIT_EVENT_NAME
-      value: "MetadataAuditEvent"
+    - name: METADATA_CHANGE_LOG_TIMESERIES_TOPIC_NAME
+      value: io.datahub.metadata.changelog.timeseries.v1Dev
+    - name: PLATFORM_EVENT_TOPIC_NAME
+      value: io.datahub.platform.event.v1Dev
+    - name: DATAHUB_USAGE_EVENT_NAME
+      value: io.datahub.usage.event.v1Dev
 
 datahub-mce-consumer:
   enabled: true
@@ -92,9 +100,9 @@ datahub-mce-consumer:
       memory: 256Mi
   extraEnvs:
     - name: METADATA_CHANGE_PROPOSAL_TOPIC_NAME
-      value: io.datahub.metadata.change.event.v1Dev
-    - name: METADATA_CHANGE_EVENT_NAME
-      value: "MetadataChangeEvent"
+      value: io.datahub.metadata.change.proposal.v1Dev
+    - name: FAILED_METADATA_CHANGE_PROPOSAL_TOPIC_NAME
+      value: io.datahub.metadata.change.proposal.failed.v1Dev
 
 datahub-ingestion-cron:
   enabled: false
