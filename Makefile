@@ -35,5 +35,5 @@ update:
 
 .PHONY: port-forward
 port-forward:
-	$(eval DATAHUB_FRONTEND_POD_NAME=$(shell kubectl get pods | grep datahub-frontend | awk '{print $1}'))
+	$(eval DATAHUB_FRONTEND_POD_NAME=$(shell kubectl get pods | grep datahub-frontend | awk '{print $$1}'))
 	kubectl port-forward $(DATAHUB_FRONTEND_POD_NAME) 9002:9002

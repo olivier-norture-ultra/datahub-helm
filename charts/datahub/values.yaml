@@ -28,9 +28,15 @@ datahub-gms:
     - name: METADATA_CHANGE_LOG_TIMESERIES_TOPIC_NAME
       value: io.datahub.metadata.changelog.timeseries.v1Dev
     - name: PLATFORM_EVENT_TOPIC_NAME
-      value: io.datahub.platform.event.v1
+      value: io.datahub.platform.event.v1Dev
     - name: DATAHUB_USAGE_EVENT_NAME
-      value: io.datahub.usage.event.v1
+      value: io.datahub.usage.event.v1Dev
+    - name: METADATA_CHANGE_EVENT_NAME
+      value: io.datahub.metadata.change.event.v4Dev
+#    - name: METADATA_AUDIT_EVENT_NAME
+#      value:
+#    - name: FAILED_METADATA_CHANGE_EVENT_NAME
+#      value:
 
 datahub-frontend:
   enabled: true
@@ -48,7 +54,7 @@ datahub-frontend:
     enabled: false
   extraEnvs:
     - name: DATAHUB_TRACKING_TOPIC
-      value: io.datahub.usage.event.v1
+      value: io.datahub.usage.event.v1Dev
 
 acryl-datahub-actions:
   enabled: true
@@ -476,7 +482,7 @@ global:
 
   neo4j:
     host: "datahub-prerequisites-neo4j-community:7474"
-    uri: "bolt://prerequisites-neo4j-community"
+    uri: "bolt://datahub-prerequisites-neo4j-community"
     username: "neo4j"
     password:
       secretRef: datahub-neo4j-secrets
